@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 3 29 26H3L16 3Z' fill='%23ff9b21'/></svg>">
+
+<title>头盔图鉴 · 1-6 级头盔全数据 | 三角洲行动</title>
+<meta name="description" content="《三角洲行动》1-6 级头盔全数据：耐久、重量、拾音范围加成、降噪、防护区域与防同级狙爆头判定。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/deco.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+        <path d="M16 3 29 26H3L16 3Z" stroke="#ff9b21" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M16 12.5 22 23H10l6-10.5Z" fill="#ff9b21" opacity=".55"/>
+      </svg>
+      <span><small>Delta Force</small><b>护甲数据库</b></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-page="home">总览</a>
+      <a href="armor.html" data-page="armor">护甲图鉴</a>
+      <a href="helmet.html" data-page="helmet">头盔图鉴</a>
+      <a href="ammo.html" data-page="ammo">弹药速查</a>
+      <a href="mechanics.html" data-page="mechanics">机制解析</a>
+      <a href="compare.html" data-page="compare">横向对比</a>
+      <a href="sandbox.html" data-page="sandbox">对枪沙盘</a>
+      <button class="theme-btn" id="themeBtn" title="切换明暗主题" aria-label="切换主题"></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding:0">
+  <div class="wrap hero-in" style="padding:48px 0 44px">
+    <div class="eyebrow">Helmet Atlas · 23 顶 + 3 顶夜视</div>
+    <h1 style="font-size:clamp(26px,3.4vw,38px)">头盔图鉴</h1>
+    <p class="lead">头盔和护甲不一样：除了直接防护，它更关乎<b style="color:var(--txt)">听力信息</b>与<b style="color:var(--txt)">防狙能力</b>。同一等级里，「听力头」和「防弹头」是两条完全不同的路线。</p>
+  </div>
+</header>
+
+<main class="sec" style="padding-top:34px">
+  <div class="wrap">
+
+    <div class="grid g3" style="margin-bottom:26px">
+      <div class="card" style="border-left:3px solid var(--t4)">
+        <h4 style="font-size:15.5px;margin-bottom:7px">听力头</h4>
+        <p style="font-size:13px;color:var(--txt-2)">用耐久换信息。四级 DICH 训练头盔 +50% 拾音是全游戏听力天花板，配合听力针能「塔内听塔外」；缺点是耐久低，别拿去贴脸。</p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--t5)">
+        <h4 style="font-size:15.5px;margin-bottom:7px">防弹头</h4>
+        <p style="font-size:13px;color:var(--txt-2)">牺牲部分听力换更高抗性。四级 GT1 战术头盔（48 耐久 + 面罩防眩晕）是猛攻流代表，五级 GN 重型头盔是最主流的「没有短板」选择。</p>
+      </div>
+      <div class="card" style="border-left:3px solid var(--t6)">
+        <h4 style="font-size:15.5px;margin-bottom:7px">自闭头</h4>
+        <p style="font-size:13px;color:var(--txt-2)">极端抗揍，代价是视野受限 + 听力受阻，甚至放大自身受击与喘息声。四级 D6 是最典型的自闭头，不建议在没有情报位预警时佩戴。</p>
+      </div>
+    </div>
+
+    <div class="filters">
+      <span class="lab">等级</span>
+      <div id="tierChips" style="display:flex;gap:7px;flex-wrap:wrap"></div>
+      <span class="lab" style="margin-left:6px">特性</span>
+      <div id="subChips" style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="chip on" data-v="all">全部</button>
+        <button class="chip" data-v="hear">带拾音加成</button>
+        <button class="chip" data-v="anti">可防同级狙</button>
+      </div>
+      <select class="sel" id="sort">
+        <option value="tier">按等级排序</option>
+        <option value="dur">按耐久排序</option>
+        <option value="wt">按重量排序</option>
+        <option value="wear">按维修损耗排序</option>
+      </select>
+      <input class="search" id="kw" placeholder="搜索名称 / 别称 / 标签…">
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <span id="cnt" style="font-size:13px;color:var(--txt-3)"></span>
+      <span style="font-size:12.5px;color:var(--txt-3)">· 拾音加成为正表示听得更远，为负表示被削弱</span>
+    </div>
+
+    <div class="items" id="helmetGrid"></div>
+
+    <h3 style="font-size:19px;margin:40px 0 6px">图标说明：头盔的 8 种原型</h3>
+    <p style="font-size:13.5px;color:var(--txt-2);margin-bottom:16px">
+      头盔图标按盔体结构与是否带耳罩 / 面罩区分。看图标就能快速判断它是「听力头」「面罩头」还是「自闭全罩头」，卡片左上角即为该件的原型。
+    </p>
+    <div class="ico-legend" id="helmetLegend"></div>
+
+    <div class="card" style="margin-top:26px;border-left:3px solid var(--warn)">
+      <h3 style="font-size:16px;margin-bottom:8px">关于卡片上的装备图片</h3>
+      <p style="font-size:13px;color:var(--txt-2);line-height:1.75">
+        每顶头盔卡片左上角都是<b style="color:var(--txt)">游戏内官方图标</b>（取自三角洲行动官方素材库），外观、配色与游戏内一致，可按图识装。全部 23 顶头盔与 3 顶夜视盔均已配图。判断一顶头盔的强弱，请以耐久、拾音范围与「防同级狙」判定这些面板数据为准。
+      </p>
+    </div>
+
+    <div class="card" style="margin-top:38px;border-left:3px solid var(--accent)">
+      <h3 style="font-size:17px;margin-bottom:10px">三条硬规则</h3>
+      <p style="font-size:13.5px;color:var(--txt-2)">
+        <b style="color:var(--txt)">一、防狙有耐久门槛。</b>面对狙击步枪时头盔几乎必定碎甲，同级甲弹对抗下耐久越高的头最终所受伤害越低。五级头要有 44 点以上耐久才能扛住一发金弹狙——所以一个残的六级头，防护可能还不如全新的四级头。<br>
+        <b style="color:var(--txt)">二、面部是独立区域。</b>没面罩的头盔哪怕等级再高，脸部中弹照样触发眩晕，对枪时特别致命。GT1 的卖点正是这一点。<br>
+        <b style="color:var(--txt)">三、听力加成不受耐久影响。</b>所以买破损的听力头依然划算；而防弹头务必买满耐久，否则起不到防弹作用。
+      </p>
+    </div>
+
+    <h3 style="font-size:19px;margin:38px 0 6px">附录：夜视头盔</h3>
+    <p style="font-size:13.5px;color:var(--txt-2);margin-bottom:16px">主要用于夜战，白天也能用——摘下夜视仪后就是无遮挡视野。这些头盔的价值主要体现在夜视仪，头盔本身只是载体。</p>
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>名称</th><th>等级</th><th>耐久</th><th>重量</th><th>拾音</th><th>维修损耗</th><th>防同级狙</th></tr>
+        </thead>
+        <tbody id="nvgBody"></tbody>
+      </table>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span><b>三角洲行动 · 护甲数据库</b> — 非官方粉丝向站点，素材版权归腾讯所有，仅供配装参考。</span>
+    <span style="margin-left:auto">数据整理自公开社区实测，请以游戏内面板为准。</span>
+  </div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/icons.js"></script>
+<script src="assets/itemimg.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/deco.js"></script>
+<script>
+  /* 夜视头盔并入主表检索，保持 openHelmet 索引一致 */
+  window.__helmets = HELMETS.concat(NVG_HELMETS);
+  initNav('helmet');
+  setupAtlas({ data: window.__helmets, mountId: 'helmetGrid', type: 'helmet' });
+  renderIconLegend('helmet', 'helmetLegend');
+
+  document.getElementById('nvgBody').innerHTML = NVG_HELMETS.map(h => {
+    const anti = h.anti === true
+      ? '<span class="badge g">可防</span>'
+      : h.anti === false ? '<span class="badge r">不可防</span>' : '<span class="badge n">—</span>';
+    return `<tr>
+      <td>${iconMini(h.name, 'helmet', h.tier)}<b>${h.name}</b><div style="font-size:12px;color:var(--txt-3)">${h.areas.join(' / ')}</div></td>
+      <td class="num" style="color:var(--t${h.tier})">${h.tier} 级</td>
+      <td class="num">${h.dur}</td>
+      <td class="num">${h.wt}</td>
+      <td class="num">${h.hear > 0 ? '+' : ''}${h.hear}%</td>
+      <td class="num">${h.wear}%</td>
+      <td>${anti}</td>
+    </tr>`;
+  }).join('');
+</script>
+</body>
+</html>

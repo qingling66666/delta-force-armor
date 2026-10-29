@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 3 29 26H3L16 3Z' fill='%23ff9b21'/></svg>">
+
+<title>机制解析 · 穿透 / 减伤 / 维修 | 三角洲行动护甲数据库</title>
+<meta name="description" content="《三角洲行动》护甲机制解析：穿透等级减伤公式、溢出伤害结算、防护部位盲区、维修损耗与维修效率，附可交互伤害计算器。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/deco.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+        <path d="M16 3 29 26H3L16 3Z" stroke="#ff9b21" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M16 12.5 22 23H10l6-10.5Z" fill="#ff9b21" opacity=".55"/>
+      </svg>
+      <span><small>Delta Force</small><b>护甲数据库</b></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-page="home">总览</a>
+      <a href="armor.html" data-page="armor">护甲图鉴</a>
+      <a href="helmet.html" data-page="helmet">头盔图鉴</a>
+      <a href="ammo.html" data-page="ammo">弹药速查</a>
+      <a href="mechanics.html" data-page="mechanics">机制解析</a>
+      <a href="compare.html" data-page="compare">横向对比</a>
+      <a href="sandbox.html" data-page="sandbox">对枪沙盘</a>
+      <button class="theme-btn" id="themeBtn" title="切换明暗主题" aria-label="切换主题"></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding:0">
+  <div class="wrap hero-in" style="padding:48px 0 44px">
+    <div class="eyebrow">Mechanics</div>
+    <h1 style="font-size:clamp(26px,3.4vw,38px)">机制解析</h1>
+    <p class="lead">护甲怎么算伤害、耐久怎么掉、修一次亏多少上限——把这三件事弄明白，比背一百条装备评测都管用。</p>
+  </div>
+</header>
+
+<main>
+
+  <!-- 穿透机制 -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Step 1 · Penetration</div>
+        <h2>穿透匹配：伤害结算的第一步</h2>
+        <p>每发子弹都有「穿透等级」和「基础肉伤 / 基础甲伤」。命中后，先用子弹穿透等级与目标部位护甲等级做差，得到三个结果：能穿透多少、甲伤打几折、肉伤留多少。</p>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>等级关系</th><th>肉体伤害保留</th><th>护甲伤害倍率</th><th>说明</th></tr>
+          </thead>
+          <tbody id="penBody"></tbody>
+        </table>
+      </div>
+
+      <div class="mech" style="margin-top:26px">
+        <div class="mech-row">
+          <div class="mech-ico">!</div>
+          <div>
+            <h4>溢出伤害：一枪把甲打碎，剩下的伤害怎么算</h4>
+            <p>如果本枪甲伤超过了护甲剩余耐久，只有「被甲吃下」的那部分肉伤会按减免比例结算，超出部分视为目标无防护、全额生效。<br>
+            以官方示例为准：一次射击预期肉伤 40、甲伤 50，目标同级护甲只剩 30 点耐久。则 (30 ÷ 50) × 40 = 24 点肉伤被护甲吸收、再减免 50% → <b>12 点</b>；剩余 40 − 24 = 16 点视为无防护 → 全额 <b>16 点</b>；最终造成 <b>28 点</b>肉体伤害。</p>
+          </div>
+        </div>
+        <div class="mech-row">
+          <div class="mech-ico">×</div>
+          <div>
+            <h4>低穿弹打高甲：打不动人，但能磨死甲</h4>
+            <p>子弹低 1 级时肉伤为 0，只能消耗护甲耐久；低 2 级及以上，甲伤还会额外衰减（约 60% / 40% / 25%）。四级弹打五级甲，每枪掉 40 点甲、肉伤 0，打空 125 点耐久要<b>四枪</b>——这四枪里你一点血都没打掉，对手完全可以把你反杀。</p>
+          </div>
+        </div>
+        <div class="mech-row">
+          <div class="mech-ico">◎</div>
+          <div>
+            <h4>金弹加成与近战减免</h4>
+            <p>同级对抗时，金色品质（穿甲型）子弹约有 110% 的甲伤加成，破甲效率更高。近战武器的规则完全不同：护甲只减免 (5 × 防护等级)% 的近战伤害，每次命中固定消耗 4 点耐久。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 计算器 -->
+  <section class="sec" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Step 2 · Calculator</div>
+        <h2>伤害计算器</h2>
+        <p>输入一发子弹的面板数值与目标护甲的当前状态，实时算出每枪的甲伤、肉伤与破甲所需枪数。</p>
+      </div>
+
+      <div class="calc">
+        <div class="card">
+          <div class="field">
+            <label>子弹穿透等级</label>
+            <div class="range-out"><span>0 — 7 级（越低越难穿甲）</span><b id="bLvOut"></b></div>
+            <input type="range" id="bLvR" min="0" max="7" step="1" value="4" style="width:100%">
+            <input type="number" id="bLv" value="4" min="0" max="7" style="margin-top:8px">
+          </div>
+          <div class="field">
+            <label>子弹基础肉体伤害</label>
+            <input type="number" id="bFlesh" value="40" min="0" step="1">
+            <div class="hint">面板上的「肉体伤害」数值，例：SCAR-H 为 40。</div>
+          </div>
+          <div class="field">
+            <label>子弹基础护甲伤害</label>
+            <input type="number" id="bArmor" value="40" min="1" step="1">
+            <div class="hint">面板上的「护甲伤害」数值，例：SCAR-H 为 40。</div>
+          </div>
+          <div class="field">
+            <label>目标护甲等级</label>
+            <select id="aLv">
+              <option value="1">1 级 · 白装</option>
+              <option value="2">2 级 · 绿装</option>
+              <option value="3">3 级 · 蓝装</option>
+              <option value="4" selected>4 级 · 紫装</option>
+              <option value="5">5 级 · 金装</option>
+              <option value="6">6 级 · 红装</option>
+            </select>
+          </div>
+          <div class="field" style="margin-bottom:0">
+            <label>目标护甲剩余耐久</label>
+            <div class="range-out"><span>1 — 150 点</span><b id="aDurOut"></b></div>
+            <input type="range" id="aDurR" min="1" max="150" step="1" value="110" style="width:100%">
+            <input type="number" id="aDur" value="110" min="1" max="150" style="margin-top:8px">
+          </div>
+        </div>
+
+        <div class="result">
+          <div class="res-main">
+            <h4>单发结算结果</h4>
+            <div class="res-grid">
+              <div><b id="rArmorDmg" style="color:var(--t3)">—</b><span>每枪护甲伤害</span></div>
+              <div><b id="rFleshDmg" style="color:var(--t6)">—</b><span>每枪肉体伤害</span></div>
+              <div><b id="rShots" style="color:var(--t5)">—</b><span>打空这层甲</span></div>
+            </div>
+            <div class="res-explain">
+              <b id="rVerdict" style="font-weight:800">—</b>
+              <div style="margin-top:10px" id="rExplain"></div>
+              <div style="margin-top:14px">
+                <div style="font-size:12px;color:var(--txt-3);margin-bottom:5px">本枪对护甲耐久的消耗比例</div>
+                <div class="hp-bar" id="rBar"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <h4 style="font-size:14px;margin-bottom:9px">怎么用</h4>
+            <p style="font-size:13px;color:var(--txt-2)">
+              把「穿透等级」调到和你子弹一致，「基础肉伤 / 甲伤」照抄游戏内面板，再选择对手穿的护甲等级和它还剩多少耐久。<br><br>
+              最实用的两个玩法：<br>
+              · 把对手甲的耐久调成很低，看「本枪即可破甲」时到底能打出多少肉伤——这解释了为什么残甲状态极其危险。<br>
+              · 把穿透等级调低一级，看破甲枪数怎么从 3 枪变成 9 枪——这就是低穿弹被反杀的数学原因。
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 部位 -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Step 3 · Hitbox</div>
+        <h2>防护部位与盲区</h2>
+        <p>护甲只保护它覆盖的地方。下面这张示意标出了躯干护甲的标准防护范围——无论几级甲，盲区都一样。</p>
+      </div>
+      <div class="card">
+        <div class="parts">
+          <svg viewBox="0 0 200 300" width="200" height="300" role="img" aria-label="躯干与头部防护区域示意">
+            <g stroke="var(--line-2)" stroke-width="2.5" fill="var(--panel-2)">
+              <!-- 手臂 -->
+              <rect x="34" y="82" width="24" height="112" rx="12"/>
+              <rect x="142" y="82" width="24" height="112" rx="12"/>
+              <!-- 腿 -->
+              <rect x="72" y="176" width="26" height="118" rx="10"/>
+              <rect x="102" y="176" width="26" height="118" rx="10"/>
+              <!-- 躯干 -->
+              <path d="M66 78 H134 L142 108 V178 H58 V108 Z"/>
+              <!-- 颈部 -->
+              <rect x="90" y="60" width="20" height="20"/>
+            </g>
+            <!-- 盲区标注（先铺红色，再由上层护甲/头盔覆盖） -->
+            <g fill="var(--no)" opacity=".72" stroke="var(--no)" stroke-width="1.6">
+              <rect x="36" y="84" width="20" height="108" rx="10"/>
+              <rect x="144" y="84" width="20" height="108" rx="10"/>
+              <rect x="74" y="178" width="22" height="114" rx="9"/>
+              <rect x="104" y="178" width="22" height="114" rx="9"/>
+              <path d="M62 150 H138 V176 H62 Z"/>
+              <circle cx="100" cy="40" r="24"/>
+            </g>
+            <g fill="var(--accent)" opacity=".30">
+              <circle cx="100" cy="40" r="24"/>
+              <rect x="88" y="58" width="24" height="24"/>
+              <path d="M68 80 H132 L138 106 V148 H62 V106 Z"/>
+            </g>
+            <g stroke="var(--accent)" stroke-width="2" fill="none" opacity=".85">
+              <circle cx="100" cy="40" r="24"/>
+              <rect x="88" y="58" width="24" height="24"/>
+              <path d="M68 80 H132 L138 106 V148 H62 V106 Z"/>
+            </g>
+            <text x="100" y="292" text-anchor="middle" font-size="11" fill="var(--txt-3)" font-family="monospace">FRONT VIEW / 正面防护示意</text>
+          </svg>
+
+          <ul>
+            <li><span class="dot" style="background:var(--accent)"></span><span><b>头盔覆盖：头部 / 耳部 /（部分含）面部</b> — 各型号覆盖范围不同。面部是独立区域，没有面罩的头被脸部命中会触发眩晕。</span></li>
+            <li><span class="dot" style="background:var(--accent)"></span><span><b>护甲覆盖：胸部 + 上腹部</b> — 「全甲」指胸腹完整防护，「半甲」往往只护胸部、不保护下腹部，这是最容易被忽略也最致命的差别。</span></li>
+            <li><span class="dot" style="background:var(--no)"></span><span><b>四肢完全无防护</b> — 高肉伤低穿透的「肉弹」（穿透等级 0，如 RIP 类）虽然打不穿甲，打四肢却是全额伤害，这就是「修脚流」能成立的原因。</span></li>
+            <li><span class="dot" style="background:var(--no)"></span><span><b>颈部按胸部计算</b> — 不算头部，只享受护甲减伤，不享受头盔保护。</span></li>
+            <li><span class="dot" style="background:var(--txt-3)"></span><span><b>倒地后视为无防护</b> — 补枪不会消耗护甲耐久，护甲也不再提供保护。</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 维修 -->
+  <section class="sec" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Step 4 · Repair</div>
+        <h2>维修系统：一件甲能用几局</h2>
+        <p>三个概念必须分清：<b>耐久</b>决定这一局你有多能扛，<b>维修损耗</b>决定这件甲能陪你几局，<b>维修效率</b>决定修它要烧多少维修包。</p>
+      </div>
+      <div class="grid g3">
+        <div class="card">
+          <div class="eyebrow">Durability</div>
+          <h4 style="font-size:16px;margin:6px 0 8px">耐久</h4>
+          <p style="font-size:13.5px;color:var(--txt-2)">总承伤量。耐久归零后护甲不再提供任何防护，但移速 / 开镜惩罚与听力变化不会消失。同级甲弹对抗下，耐久越高，越可能多扛一发。</p>
+        </div>
+        <div class="card">
+          <div class="eyebrow">Wear</div>
+          <h4 style="font-size:16px;margin:6px 0 8px">维修损耗</h4>
+          <p style="font-size:13.5px;color:var(--txt-2)">只有把耐久从零<b>完整修满</b>时，才会永久扣除这个比例的耐久上限。中途停止、局部补耐久不会触发。区间从特里克甲 / 武士甲的 6% 一直到突击甲的 18%。</p>
+        </div>
+        <div class="card">
+          <div class="eyebrow">Efficiency</div>
+          <h4 style="font-size:16px;margin:6px 0 8px">维修效率</h4>
+          <p style="font-size:13.5px;color:var(--txt-2)">维修包点数转换成护甲耐久的倍率。修同一件甲，效率越低消耗的维修包越多。高级维修套装修低级护甲效率会打折，反之亦然。</p>
+        </div>
+      </div>
+
+      <div class="tbl-wrap" style="margin-top:22px">
+        <table>
+          <thead>
+            <tr><th>护甲</th><th>等级</th><th>总耐久</th><th>维修损耗</th><th>修满 1 次后</th><th>修满 2 次后</th><th>修满 3 次后</th></tr>
+          </thead>
+          <tbody id="repairBody"></tbody>
+        </table>
+      </div>
+      <p style="margin-top:14px;font-size:13px;color:var(--txt-3)">
+        表中为「每次从零完整修满」的耐久上限推演。实战中不会每次都修满，因此实际衰减通常更慢；但前期修满、后期修满的差异会累积。
+      </p>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="wrap">
+      <div class="card" style="border-left:3px solid var(--accent)">
+        <h3 style="font-size:18px;margin-bottom:12px">把机制变成钱：三条实战结论</h3>
+        <p style="font-size:13.5px;color:var(--txt-2)">
+          <b style="color:var(--txt)">1. 先看「低 2 级」这条线。</b>你的子弹如果比对手的甲低 2 级及以上，甲伤要打 6 折甚至更低，破甲枪数会成倍增加——这时候换子弹比换枪更划算。<br>
+          <b style="color:var(--txt)">2. 4 级和 5 级之间不是「升一级」，是「换一个对局」。</b>五级甲要 5 级弹才能高效处理，而绝密局的常见弹药恰好是这一档。这就是五级甲被称为分水岭的原因。<br>
+          <b style="color:var(--txt)">3. 维修损耗比初始耐久更值钱。</b>MK-2 的 110 耐久配 9% 损耗，长期成本远低于突击甲的 90 耐久配 18%。
+        </p>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span><b>三角洲行动 · 护甲数据库</b> — 非官方粉丝向站点，素材版权归腾讯所有，仅供配装参考。</span>
+    <span style="margin-left:auto">公式与数值整理自公开资料与社区实测，请以游戏内实际表现为准。</span>
+  </div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/icons.js"></script>
+<script src="assets/itemimg.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/deco.js"></script>
+<script>
+  initNav('mechanics');
+
+  /* 穿透表 */
+  document.getElementById('penBody').innerHTML = PEN_TABLE.map(p => `
+    <tr>
+      <td><b>${p.label}</b></td>
+      <td class="num" style="color:${p.flesh >= 75 ? 'var(--ok)' : p.flesh > 0 ? 'var(--warn)' : 'var(--no)'}">${p.flesh}%</td>
+      <td class="num">${p.armor}%</td>
+      <td style="color:var(--txt-2);font-size:12.5px">${p.text}</td>
+    </tr>`).join('');
+
+  /* 维修推演表（只列四级及以上，避免过长） */
+  document.getElementById('repairBody').innerHTML = ARMORS
+    .filter(a => a.tier >= 4)
+    .sort((a, b) => a.tier - b.tier || a.dur - b.dur)
+    .map(a => {
+      const d1 = a.dur * (1 - a.wear / 100);
+      const d2 = a.dur * Math.pow(1 - a.wear / 100, 2);
+      const d3 = a.dur * Math.pow(1 - a.wear / 100, 3);
+      return `<tr>
+        <td><b>${a.name}</b><div style="font-size:12px;color:var(--txt-3)">${a.alias || a.type}</div></td>
+        <td class="num" style="color:var(--t${a.tier})">${a.tier} 级</td>
+        <td class="num">${a.dur}</td>
+        <td class="num">${a.wear}%</td>
+        <td class="num">${d1.toFixed(1)}</td>
+        <td class="num" style="color:${d2 < a.dur * .8 ? 'var(--t5)' : 'var(--txt)'}">${d2.toFixed(1)}</td>
+        <td class="num" style="color:${d3 < a.dur * .75 ? 'var(--t6)' : 'var(--txt-2)'}">${d3.toFixed(1)}</td>
+      </tr>`;
+    }).join('');
+
+  /* 计算器：额外同步显示当前值 */
+  const bLv = document.getElementById('bLv'), aDur = document.getElementById('aDur');
+  const syncOut = () => {
+    document.getElementById('bLvOut').textContent = bLv.value + ' 级';
+    document.getElementById('aDurOut').textContent = aDur.value + ' 点';
+  };
+  bLv.addEventListener('input', syncOut);
+  aDur.addEventListener('input', syncOut);
+  document.getElementById('bLvR').addEventListener('input', syncOut);
+  document.getElementById('aDurR').addEventListener('input', syncOut);
+  syncOut();
+
+  initCalc();
+</script>
+</body>
+</html>

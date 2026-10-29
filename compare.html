@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 3 29 26H3L16 3Z' fill='%23ff9b21'/></svg>">
+
+<title>横向对比 · 全装备数据总表 | 三角洲行动护甲数据库</title>
+<meta name="description" content="《三角洲行动》护甲与头盔横向对比总表：点击表头排序，快速找出最高耐久、最轻、最耐修的装备。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/deco.css">
+<style>
+  th.sortable { cursor: pointer; user-select: none; }
+  th.sortable:hover { color: var(--accent); }
+  th.sortable::after { content: ' ⇅'; font-size: 10px; opacity: .4; }
+  th.sortable.asc::after { content: ' ↑'; opacity: 1; color: var(--accent); }
+  th.sortable.desc::after { content: ' ↓'; opacity: 1; color: var(--accent); }
+  .tabs { display: flex; gap: 8px; margin-bottom: 20px; }
+  .tab { padding: 9px 20px; border-radius: 10px; border: 1px solid var(--line); background: var(--panel); font-weight: 700; font-size: 14px; color: var(--txt-2); }
+  .tab.on { background: var(--accent); border-color: var(--accent); color: #0a0d12; }
+  [data-theme="light"] .tab.on { color: #fff; }
+  .best { color: var(--ok); font-weight: 800; }
+  .worst { color: var(--no); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+        <path d="M16 3 29 26H3L16 3Z" stroke="#ff9b21" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M16 12.5 22 23H10l6-10.5Z" fill="#ff9b21" opacity=".55"/>
+      </svg>
+      <span><small>Delta Force</small><b>护甲数据库</b></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-page="home">总览</a>
+      <a href="armor.html" data-page="armor">护甲图鉴</a>
+      <a href="helmet.html" data-page="helmet">头盔图鉴</a>
+      <a href="ammo.html" data-page="ammo">弹药速查</a>
+      <a href="mechanics.html" data-page="mechanics">机制解析</a>
+      <a href="compare.html" data-page="compare">横向对比</a>
+      <a href="sandbox.html" data-page="sandbox">对枪沙盘</a>
+      <button class="theme-btn" id="themeBtn" title="切换明暗主题" aria-label="切换主题"></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding:0">
+  <div class="wrap hero-in" style="padding:48px 0 44px">
+    <div class="eyebrow">Comparison</div>
+    <h1 style="font-size:clamp(26px,3.4vw,38px)">横向对比总表</h1>
+    <p class="lead">点击任意表头即可排序。<b style="color:var(--ok)">绿色</b>标记该项全表最优，<b style="color:var(--no)">红色</b>标记最差。</p>
+  </div>
+</header>
+
+<main class="sec" style="padding-top:32px">
+  <div class="wrap">
+
+    <div class="tabs">
+      <button class="tab on" data-tab="armor">防弹衣（25 件）</button>
+      <button class="tab" data-tab="helmet">头盔（23 顶）</button>
+    </div>
+
+    <div id="armorPanel">
+      <div class="tbl-wrap">
+        <table id="armorTbl">
+          <thead>
+            <tr>
+              <th class="sortable" data-k="name">名称</th>
+              <th class="sortable" data-k="tier">等级</th>
+              <th class="sortable" data-k="type">类型</th>
+              <th class="sortable" data-k="dur">耐久</th>
+              <th class="sortable" data-k="wt">重量</th>
+              <th class="sortable" data-k="ads">瞄准速度</th>
+              <th class="sortable" data-k="mv">移动速度</th>
+              <th class="sortable" data-k="wear">维修损耗</th>
+              <th class="sortable" data-k="d1">修满 1 次</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="grid g3" style="margin-top:24px">
+        <div class="card"><div class="eyebrow">最高耐久</div><h4 style="font-size:16px;margin-top:6px" data-ico="泰坦防弹装甲|armor">泰坦防弹装甲 · 150</h4><p style="font-size:13px;color:var(--txt-2)">每高一级护甲，同级弹打它需要的枪数就多一档。代价是 -12% 瞄速、-8% 移速，机动性全表最差。</p></div>
+        <div class="card"><div class="eyebrow">最高耐久 / 重量比</div><h4 style="font-size:16px;margin-top:6px" data-ico="TG-H 防弹衣|armor">TG-H 防弹衣 · 75 / 4.5kg</h4><p style="font-size:13px;color:var(--txt-2)">三级甲里的效率之王，每公斤重量换来 16.7 点耐久，而且胸腹双护。这也是它被称作「平民战神」的原因。</p></div>
+        <div class="card"><div class="eyebrow">最耐修</div><h4 style="font-size:16px;margin-top:6px" data-ico="特里克 MAS2.0 装甲|armor">特里克 MAS2.0 · 6%</h4><p style="font-size:13px;color:var(--txt-2)">修满两次后仍有 107.3 点上限，是所有红甲里长期成本最低的一件。等级越低越好修，因此 1-3 级甲多为 4%-9%。</p></div>
+      </div>
+    </div>
+
+    <div id="helmetPanel" style="display:none">
+      <div class="tbl-wrap">
+        <table id="helmetTbl">
+          <thead>
+            <tr>
+              <th class="sortable" data-k="name">名称</th>
+              <th class="sortable" data-k="tier">等级</th>
+              <th class="sortable" data-k="dur">耐久</th>
+              <th class="sortable" data-k="wt">重量</th>
+              <th class="sortable" data-k="hear">拾音范围</th>
+              <th class="sortable" data-k="ads">瞄准速度</th>
+              <th class="sortable" data-k="mv">移动速度</th>
+              <th class="sortable" data-k="wear">维修损耗</th>
+              <th class="sortable" data-k="anti">防同级狙</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="grid g3" style="margin-top:24px">
+        <div class="card"><div class="eyebrow">听力天花板</div><h4 style="font-size:16px;margin-top:6px" data-ico="DICH 训练头盔|helmet">DICH 训练头盔 · +50%</h4><p style="font-size:13px;color:var(--txt-2)">全游戏最大拾音范围增益，且不遮挡视野。代价是只有 35 耐久、15% 维修损耗，适合信息位而非贴脸位。</p></div>
+        <div class="card"><div class="eyebrow">综合最强（六级）</div><h4 style="font-size:16px;margin-top:6px" data-ico="DICH-9 重型头盔|helmet">DICH-9 重型头盔</h4><p style="font-size:13px;color:var(--txt-2)">唯一「听力 +40% 且能防同级狙」的头盔，负面只有 -3% 瞄速 / -1% 移速。唯一缺点是主要靠特勤处制造，不是想买就买得到。</p></div>
+        <div class="card"><div class="eyebrow">最耐打</div><h4 style="font-size:16px;margin-top:6px" data-ico="GT5 指挥官头盔|helmet">GT5 指挥官头盔 · 60 耐久</h4><p style="font-size:13px;color:var(--txt-2)">全游戏耐久最高的头盔，还能多次防狙击爆头。但 -8% 开镜速度对枪位负反馈明显，适合打狙或室内强攻。</p></div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span><b>三角洲行动 · 护甲数据库</b> — 非官方粉丝向站点，素材版权归腾讯所有，仅供配装参考。</span>
+    <span style="margin-left:auto">数据整理自公开社区实测，请以游戏内面板为准。</span>
+  </div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/icons.js"></script>
+<script src="assets/itemimg.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/deco.js"></script>
+<script>
+  initNav('compare');
+
+  /* 结论卡片：按 data-ico="名称|类型" 补上对应图标 */
+  document.querySelectorAll('[data-ico]').forEach(el => {
+    const parts = el.dataset.ico.split('|');
+    const name = parts[0], kind = parts[1];
+    const src = kind === 'helmet' ? HELMETS.concat(NVG_HELMETS) : ARMORS;
+    const hit = src.find(x => x.name === name);
+    el.insertAdjacentHTML('afterbegin', iconMini(name, kind, hit ? hit.tier : null));
+  });
+
+  const sign = v => (v === 0 ? '—' : (v > 0 ? '+' : '') + v + '%');
+
+  /* ---------- 防弹衣 ---------- */
+  const armorRows = ARMORS.map(a => ({
+    ...a, d1: +(a.dur * (1 - a.wear / 100)).toFixed(1)
+  }));
+  const aMax = { dur: Math.max(...armorRows.map(r => r.dur)), d1: Math.max(...armorRows.map(r => r.d1)) };
+  const aMin = { wt: Math.min(...armorRows.map(r => r.wt)), wear: Math.min(...armorRows.map(r => r.wear)) };
+
+  function renderArmor(rows) {
+    document.querySelector('#armorTbl tbody').innerHTML = rows.map(a => `
+      <tr>
+        <td>${iconMini(a.name, 'armor', a.tier)}<b>${a.name}</b><div style="font-size:12px;color:var(--txt-3);padding-left:25px">${a.alias || '—'}</div></td>
+        <td class="num" style="color:var(--t${a.tier})">${a.tier} 级</td>
+        <td style="font-size:12.5px;color:var(--txt-2)">${a.type}</td>
+        <td class="num ${a.dur === aMax.dur ? 'best' : ''}">${a.dur}</td>
+        <td class="num ${a.wt === aMin.wt ? 'best' : ''}">${a.wt} kg</td>
+        <td class="num">${sign(a.ads)}</td>
+        <td class="num">${sign(a.mv)}</td>
+        <td class="num ${a.wear === aMin.wear ? 'best' : (a.wear >= 18 ? 'worst' : '')}">${a.wear}%</td>
+        <td class="num ${a.d1 === aMax.d1 ? 'best' : ''}">${a.d1}</td>
+      </tr>`).join('');
+  }
+
+  /* ---------- 头盔 ---------- */
+  const allHelmets = HELMETS.concat(NVG_HELMETS);
+  const hMax = { dur: Math.max(...allHelmets.map(r => r.dur)), hear: Math.max(...allHelmets.map(r => r.hear)) };
+  const hMin = { wt: Math.min(...allHelmets.map(r => r.wt)), wear: Math.min(...allHelmets.map(r => r.wear)) };
+
+  function renderHelmet(rows) {
+    document.querySelector('#helmetTbl tbody').innerHTML = rows.map(h => {
+      const anti = h.anti === true ? '<span class="badge g">可防</span>'
+        : h.anti === false ? '<span class="badge r">不可防</span>' : '<span class="badge n">—</span>';
+      return `<tr>
+        <td>${iconMini(h.name, 'helmet', h.tier)}<b>${h.name}</b><div style="font-size:12px;color:var(--txt-3);padding-left:25px">${h.areas.join(' / ')}</div></td>
+        <td class="num" style="color:var(--t${h.tier})">${h.tier} 级</td>
+        <td class="num ${h.dur === hMax.dur ? 'best' : ''}">${h.dur}</td>
+        <td class="num ${h.wt === hMin.wt ? 'best' : ''}">${h.wt} kg</td>
+        <td class="num ${h.hear === hMax.hear ? 'best' : (h.hear < 0 ? 'worst' : '')}">${h.hear > 0 ? '+' : ''}${h.hear}%</td>
+        <td class="num">${sign(h.ads)}</td>
+        <td class="num">${sign(h.mv)}</td>
+        <td class="num ${h.wear === hMin.wear ? 'best' : (h.wear >= 16 ? 'worst' : '')}">${h.wear}%</td>
+        <td>${anti}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  /* ---------- 排序 ---------- */
+  let aState = { k: 'tier', asc: true };
+  let hState = { k: 'tier', asc: true };
+
+  function sortData(arr, st) {
+    return [...arr].sort((x, y) => {
+      let vx = x[st.k], vy = y[st.k];
+      if (typeof vx === 'string') return st.asc ? vx.localeCompare(vy, 'zh') : vy.localeCompare(vx, 'zh');
+      /* anti 布尔当数字处理 */
+      if (typeof vx === 'boolean') { vx = vx ? 1 : 0; vy = vy ? 1 : 0; }
+      if (vx === null || vx === undefined) vx = -1;
+      if (vy === null || vy === undefined) vy = -1;
+      return st.asc ? vx - vy : vy - vx;
+    });
+  }
+
+  function bindSort(tblId, st, data, render) {
+    const tbl = document.getElementById(tblId);
+    tbl.querySelectorAll('th.sortable').forEach(th => {
+      th.addEventListener('click', () => {
+        if (st.k === th.dataset.k) st.asc = !st.asc;
+        else { st.k = th.dataset.k; st.asc = true; }
+        tbl.querySelectorAll('th.sortable').forEach(x => x.classList.remove('asc', 'desc'));
+        th.classList.add(st.asc ? 'asc' : 'desc');
+        render(sortData(data, st));
+      });
+    });
+  }
+
+  renderArmor(sortData(armorRows, aState));
+  renderHelmet(sortData(allHelmets, hState));
+  bindSort('armorTbl', aState, armorRows, renderArmor);
+  bindSort('helmetTbl', hState, allHelmets, renderHelmet);
+
+  /* ---------- 标签切换 ---------- */
+  document.querySelectorAll('.tab').forEach(t => {
+    t.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach(x => x.classList.remove('on'));
+      t.classList.add('on');
+      const armor = t.dataset.tab === 'armor';
+      document.getElementById('armorPanel').style.display = armor ? '' : 'none';
+      document.getElementById('helmetPanel').style.display = armor ? 'none' : '';
+    });
+  });
+</script>
+</body>
+</html>

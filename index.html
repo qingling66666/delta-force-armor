@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 3 29 26H3L16 3Z' fill='%23ff9b21'/></svg>">
+
+<title>三角洲行动 · 护甲数据库 | 防弹衣与头盔全等级图鉴</title>
+<meta name="description" content="《三角洲行动》护甲数据库：1-6 级防弹衣与头盔全图鉴，含耐久、重量、机动惩罚、维修损耗、穿透减伤机制与伤害计算器。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/deco.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+        <path d="M16 3 29 26H3L16 3Z" stroke="#ff9b21" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M16 12.5 22 23H10l6-10.5Z" fill="#ff9b21" opacity=".55"/>
+      </svg>
+      <span><small>Delta Force</small><b>护甲数据库</b></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-page="home">总览</a>
+      <a href="armor.html" data-page="armor">护甲图鉴</a>
+      <a href="helmet.html" data-page="helmet">头盔图鉴</a>
+      <a href="ammo.html" data-page="ammo">弹药速查</a>
+      <a href="mechanics.html" data-page="mechanics">机制解析</a>
+      <a href="compare.html" data-page="compare">横向对比</a>
+      <a href="sandbox.html" data-page="sandbox">对枪沙盘</a>
+      <button class="theme-btn" id="themeBtn" title="切换明暗主题" aria-label="切换主题"></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap hero-in">
+    <div class="eyebrow">Tactical Armor Database · S 赛季版</div>
+    <h1>三角洲行动<br><span>护甲与头盔</span>全等级数据库</h1>
+    <p class="lead">从一级尼龙防弹衣到六级特里克 MAS2.0，把耐久、重量、机动惩罚、维修损耗和穿透减伤机制一次讲清楚。别再花冤枉钱买一堆「一打就穿」的破布。</p>
+    <div class="hero-stats">
+      <div class="stat"><b>6</b><span>防护等级体系</span></div>
+      <div class="stat"><b>25</b><span>件防弹衣</span></div>
+      <div class="stat"><b>26</b><span>顶头盔（含夜视）</span></div>
+      <div class="stat"><b>0-7</b><span>弹药穿透等级</span></div>
+      <div class="stat"><b>10</b><span>种已收录口径</span></div>
+      <div class="stat"><b>4</b><span>部位伤害倍率</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <!-- 等级速览 -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Tier System</div>
+        <h2>六个防护等级，一套品质语言</h2>
+        <p>护甲按白 / 绿 / 蓝 / 紫 / 金 / 红 六档品质划分，等级越高防护越强，但重量、开镜速度与移动速度惩罚也越重。选择的核心不是「越高越好」，而是「匹配你的打法与对局强度」。</p>
+      </div>
+      <div class="tier-strip" id="tierStrip"></div>
+    </div>
+  </section>
+
+  <!-- 核心机制 -->
+  <section class="sec" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Core Mechanics</div>
+        <h2>四条决定性机制</h2>
+        <p>看懂这四条，护甲面板上那些数字才有意义。</p>
+      </div>
+      <div class="mech">
+        <div class="mech-row">
+          <div class="mech-ico">01</div>
+          <div>
+            <h4>穿透匹配 —— 决定你能不能打到人</h4>
+            <p>子弹穿透等级与护甲等级做差：同级只保留 50% 肉伤，高 1 级保留 75%，高 2 级及以上完全无视护甲；而低 1 级就无法穿透，只能一点一点磨耐久，低 2 级以上甲伤还会额外衰减。这是「同一把枪换一梭子子弹就是两个强度」的根本原因。</p>
+          </div>
+        </div>
+        <div class="mech-row">
+          <div class="mech-ico">02</div>
+          <div>
+            <h4>耐久与碎裂 —— 护甲是一层会破的盾</h4>
+            <p>耐久归零后护甲不再提供任何防护，但移速 / 开镜惩罚与听力变化不会消失。低穿甲弹打高级护甲时，肉伤为 0，只有把耐久打空后才开始扣血——所以绝密局里「破甲耗时太长」常常会被反杀。</p>
+          </div>
+        </div>
+        <div class="mech-row">
+          <div class="mech-ico">03</div>
+          <div>
+            <h4>维修损耗 —— 决定一件甲能用几局</h4>
+            <p>每次把耐久从零完整修满，都会永久扣除一定比例的耐久上限（6% ~ 18%）。修满一次特里克甲只掉 6%，突击甲却掉 18%——后者的长期使用价值几乎为零。这是选甲时最容易被忽略、也最影响成本的一项。</p>
+          </div>
+        </div>
+        <div class="mech-row">
+          <div class="mech-ico">04</div>
+          <div>
+            <h4>防护盲区 —— 修脚党的财富密码</h4>
+            <p>护甲只覆盖胸部与上腹部，四肢、下腹、颈部和面部都是盲区；头盔也分头部、耳部、面部三个区域，没面罩的头被脸部命中照样眩晕。六级甲也挡不住打在四肢上的全额肉伤。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 穿透速查 -->
+  <section class="sec">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Penetration Matrix</div>
+        <h2>穿透速查表</h2>
+        <p>以「子弹等级 − 护甲等级」为差值，直接查每枪的肉体伤害与护甲伤害倍率。</p>
+      </div>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr><th>等级关系</th><th>肉体伤害保留</th><th>护甲伤害倍率</th><th>说明</th></tr>
+          </thead>
+          <tbody id="penMini"></tbody>
+        </table>
+      </div>
+      <p style="margin-top:18px;font-size:13.5px;color:var(--txt-2)">
+        想知道手里的弹具体是什么等级？去 <a href="ammo.html" style="color:var(--accent);font-weight:700">弹药速查</a> 查口径与型号，还能逐档试打 1-6 级护甲。想要更精确的结果？去 <a href="mechanics.html" style="color:var(--accent);font-weight:700">机制解析</a> 用伤害计算器，输入具体枪械的肉伤 / 甲伤与目标护甲状态。或者直接进 <a href="sandbox.html" style="color:var(--accent);font-weight:700">对枪沙盘</a>，把两套配装摆在一起看谁能先倒。
+      </p>
+    </div>
+  </section>
+
+  <!-- 推荐 -->
+  <section class="sec" style="background:var(--bg-2);border-top:1px solid var(--line);border-bottom:1px solid var(--line)">
+    <div class="wrap">
+      <div class="sec-head">
+        <div class="eyebrow">Loadout Guide</div>
+        <h2>分场景推荐配置</h2>
+        <p>按对局强度和自己的打法流派直接抄作业。</p>
+      </div>
+      <div class="grid g4" id="recGrid"></div>
+    </div>
+  </section>
+
+  <!-- 入口 -->
+  <section class="sec">
+    <div class="wrap">
+      <a class="card" href="sandbox.html" style="display:block;border-left:3px solid var(--accent);margin-bottom:16px">
+        <div class="eyebrow">Duel Sandbox · 最推荐</div>
+        <h3 style="font-size:21px;margin-bottom:8px">对枪沙盘 →</h3>
+        <p style="font-size:13.5px;color:var(--txt-2);max-width:72ch">给双方各配一套「防弹衣 + 头盔 + 弹药」，选好弹着部位，逐枪推演护甲耐久与血量结算，直接给出<b style="color:var(--txt)">谁能先倒、要几枪、TTK 多少</b>。站内已收录的护甲、头盔、弹药数据全部接进这套推演里。</p>
+      </a>
+      <div class="grid g4">
+        <a class="card" href="armor.html" style="transition:.2s">
+          <div class="eyebrow">Armor</div>
+          <h3 style="font-size:19px;margin-bottom:8px">护甲图鉴 →</h3>
+          <p style="font-size:13.5px;color:var(--txt-2)">25 件防弹衣全数据，支持按等级、防护类型筛选，按耐久 / 重量 / 维修损耗排序。</p>
+        </a>
+        <a class="card" href="helmet.html">
+          <div class="eyebrow">Helmet</div>
+          <h3 style="font-size:19px;margin-bottom:8px">头盔图鉴 →</h3>
+          <p style="font-size:13.5px;color:var(--txt-2)">26 顶头盔，重点标注拾音范围与「防同级狙爆头」判定，附夜视头盔附录。</p>
+        </a>
+        <a class="card" href="ammo.html">
+          <div class="eyebrow">Ammo</div>
+          <h3 style="font-size:19px;margin-bottom:8px">弹药速查 →</h3>
+          <p style="font-size:13.5px;color:var(--txt-2)">弹甲克制矩阵与口径弹种表，选弹测甲逐档试打 1-6 级护甲。</p>
+        </a>
+        <a class="card" href="mechanics.html">
+          <div class="eyebrow">Mechanics</div>
+          <h3 style="font-size:19px;margin-bottom:8px">机制解析 →</h3>
+          <p style="font-size:13.5px;color:var(--txt-2)">伤害结算公式、防护部位示意、维修系统全解，以及可交互的伤害计算器。</p>
+        </a>
+      </div>
+      <a class="card" href="compare.html" style="display:block;margin-top:16px">
+        <div class="eyebrow">Compare</div>
+        <h3 style="font-size:19px;margin-bottom:8px">横向对比 →</h3>
+        <p style="font-size:13.5px;color:var(--txt-2);max-width:72ch">把候选护甲与头盔拉进同一张表，逐项对比耐久、重量、机动惩罚与维修损耗，选出最适合当前打法的那一套。</p>
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span><b>三角洲行动 · 护甲数据库</b> — 非官方粉丝向站点，素材版权归腾讯所有，仅供配装参考。</span>
+    <span style="margin-left:auto">数据整理自公开社区实测，游戏版本持续更新，请以游戏内面板为准。</span>
+  </div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/icons.js"></script>
+<script src="assets/itemimg.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/deco.js"></script>
+<script>
+  initNav('home');
+  renderHome();
+</script>
+</body>
+</html>

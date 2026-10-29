@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 3 29 26H3L16 3Z' fill='%23ff9b21'/></svg>">
+
+<title>弹药速查 · 口径 / 穿透等级 / 弹甲克制 | 三角洲行动护甲数据库</title>
+<meta name="description" content="《三角洲行动》弹药速查：各口径型号的穿透等级、弹甲克制矩阵，以及选弹测甲工具——选一发弹，逐档结算它对 1-6 级护甲的穿透判定与破甲枪数。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/deco.css">
+<style>
+  .ammo-cal { margin-bottom: 18px; }
+  .ammo-cal-head { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+  .ammo-cal-title { flex: 1 1 auto; min-width: 0; }
+  .ammo-cal-title h3 { font-size: 18px; font-weight: 800; margin-bottom: 6px; }
+  .ammo-weapons { display: flex; flex-wrap: wrap; gap: 5px; }
+  .ammo-note { font-size: 13px; color: var(--txt-2); margin: 12px 0 14px; }
+  .ammo-flag {
+    font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 999px;
+    border: 1px solid; white-space: nowrap;
+  }
+  .ammo-flag.ok { color: var(--ok); border-color: color-mix(in srgb, var(--ok) 42%, transparent); background: color-mix(in srgb, var(--ok) 10%, transparent); }
+  .ammo-flag.warn { color: var(--warn); border-color: color-mix(in srgb, var(--warn) 42%, transparent); background: color-mix(in srgb, var(--warn) 10%, transparent); }
+  .pen-badge {
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 800; padding: 2.5px 9px; border-radius: 6px;
+    border: 1px solid; font-family: ui-monospace, monospace; white-space: nowrap;
+  }
+  #ammoPick { width: 100%; }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+        <path d="M16 3 29 26H3L16 3Z" stroke="#ff9b21" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M16 12.5 22 23H10l6-10.5Z" fill="#ff9b21" opacity=".55"/>
+      </svg>
+      <span><small>Delta Force</small><b>护甲数据库</b></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-page="home">总览</a>
+      <a href="armor.html" data-page="armor">护甲图鉴</a>
+      <a href="helmet.html" data-page="helmet">头盔图鉴</a>
+      <a href="ammo.html" data-page="ammo">弹药速查</a>
+      <a href="mechanics.html" data-page="mechanics">机制解析</a>
+      <a href="compare.html" data-page="compare">横向对比</a>
+      <a href="sandbox.html" data-page="sandbox">对枪沙盘</a>
+      <button class="theme-btn" id="themeBtn" title="切换明暗主题" aria-label="切换主题"></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding:0">
+  <div class="wrap hero-in" style="padding:48px 0 44px">
+    <div class="eyebrow">Ammo Atlas · 矛的那一半</div>
+    <h1 style="font-size:clamp(26px,3.4vw,38px)">弹药速查</h1>
+    <p class="lead">护甲的减伤规则再熟，也要知道自己手里的弹是什么等级。基础肉伤与甲伤<b style="color:var(--txt)">绑定枪械</b>，子弹提供的是<b style="color:var(--txt)">穿透等级与伤害系数</b>——同一款弹的系数适用于该口径所有枪械。</p>
+  </div>
+</header>
+
+<main class="sec" style="padding-top:34px">
+  <div class="wrap">
+
+    <!-- 弹甲克制矩阵 -->
+    <div class="sec-head">
+      <div class="eyebrow">Penetration Matrix</div>
+      <h2 style="font-size:24px">弹甲克制矩阵</h2>
+      <p>行是子弹穿透等级，列是护甲等级。悬停单元格查看完整判定文案；「磨甲↓」表示除无法穿透外甲伤还会额外衰减。</p>
+    </div>
+    <div class="tbl-wrap" id="ammoMatrix"></div>
+
+    <!-- 选弹测甲 -->
+    <div class="sec-head" style="margin-top:52px">
+      <div class="eyebrow">Ammo vs Armor</div>
+      <h2 style="font-size:24px">选弹测甲</h2>
+      <p>从下拉框选一发弹，逐档结算它对 1-6 级护甲（每档取代表作、满耐久）的穿透判定、每枪甲伤 / 肉伤与破甲枪数。</p>
+    </div>
+    <div class="calc">
+      <div class="card">
+        <div class="field">
+          <label for="ammoPick">选择弹药</label>
+          <select id="ammoPick"></select>
+          <div class="hint">型号梯子以公开资料交叉验证为准，部分口径仅收录可确认的型号。</div>
+        </div>
+        <div class="card" style="background:var(--panel-2);margin-top:18px">
+          <div style="font-size:12.5px;color:var(--txt-3);letter-spacing:.06em;text-transform:uppercase;font-weight:700;margin-bottom:10px">使用须知</div>
+          <p style="font-size:13px;color:var(--txt-2);line-height:1.7">
+            · 低 1 级即无法穿透，破甲前肉伤为 0；<br>
+            · 肉伤弹（RIP / CT）走的是另一条路：不穿甲，专打四肢、面部、颈部等无防护部位；<br>
+            · 超出枪械优势射程后穿透判定会衰减，倾斜角度命中还可能跳弹。
+          </p>
+        </div>
+      </div>
+      <div id="ammoPickOut"></div>
+    </div>
+
+    <!-- 口径弹种表 -->
+    <div class="sec-head" style="margin-top:52px">
+      <div class="eyebrow">Calibers</div>
+      <h2 style="font-size:24px">口径与弹种</h2>
+      <p>只收录能被多来源交叉验证的型号；梯子不完整的口径会明确标注「部分收录」，缺的部分宁可不写，不做臆测。</p>
+    </div>
+    <div id="ammoGrid"></div>
+
+    <!-- 待补口径 -->
+    <div class="card" style="margin-top:34px;border-left:3px solid var(--warn)">
+      <h3 style="font-size:17px;margin-bottom:10px">待补口径（适用武器已确认，型号梯子未核实）</h3>
+      <div style="display:grid;gap:10px;margin-top:14px">
+        <div id="ammoTodo" style="display:grid;gap:10px"></div>
+      </div>
+    </div>
+
+    <!-- 图例 -->
+    <h3 style="font-size:19px;margin:40px 0 6px">图标说明：4 种弹药原型</h3>
+    <p style="font-size:13.5px;color:var(--txt-2);margin-bottom:16px">
+      弹药图标按弹壳与弹头的几何特征区分口径类别：手枪弹平钝直筒、步枪弹尖头瓶肩、全威力弹细长收尾、霰弹粗筒收口。
+    </p>
+    <div class="ico-legend" id="ammoLegend"></div>
+
+    <div class="card" style="margin-top:38px;border-left:3px solid var(--accent)">
+      <h3 style="font-size:17px;margin-bottom:10px">数据边界说明</h3>
+      <p style="font-size:13.5px;color:var(--txt-2);line-height:1.8">
+        口径 → 适用武器、型号 → 穿透等级均经多来源交叉验证；但各型号的<b style="color:var(--txt)">精确肉伤 / 甲伤系数</b>在公开资料中只有「低 / 中 / 高」级定性描述，因此本页同样保留定性、不做编造。需要精确数值时，游戏内交易行弹药栏的面板即是权威来源。赛季更新会调整弹药数值与新增型号（如 S9 的 .50 BMG 系列、S10 的 5.8mm 与 6.8mm 新弹），使用前请对照当前版本。
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span><b>三角洲行动 · 护甲数据库</b> — 非官方粉丝向站点，素材版权归腾讯所有，仅供配装参考。</span>
+    <span style="margin-left:auto">数据整理自公开社区实测与官方公告，请以游戏内面板为准。</span>
+  </div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/icons.js"></script>
+<script src="assets/itemimg.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/deco.js"></script>
+<script>
+  initNav('ammo');
+  renderAmmoMatrix(document.getElementById('ammoMatrix'));
+  renderAmmoCalibers(document.getElementById('ammoGrid'));
+  initAmmoPick('ammoPick', 'ammoPickOut');
+  renderIconLegend('ammo', 'ammoLegend');
+
+  document.getElementById('ammoTodo').innerHTML = AMMO_TODO.map(t => `
+    <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;font-size:13.5px">
+      <b style="min-width:96px">${esc(t.cal)}</b>
+      <span style="color:var(--txt-2)">${t.weapons.map(esc).join(' / ')}</span>
+      <span class="mini" style="margin-left:auto">${esc(t.hint)}</span>
+    </div>`).join('');
+</script>
+</body>
+</html>

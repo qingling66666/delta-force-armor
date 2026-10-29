@@ -1,0 +1,237 @@
+/* ============================================================
+ * 《三角洲行动》护甲数据库 — 装饰层（战术 HUD 风格）
+ * ------------------------------------------------------------
+ * 本文件只做「氛围装饰」，不改动任何布局、字号与数据样式，
+ * 全部选择器均为新增（不覆盖 style.css 里已有的规则），
+ * 想彻底移除：删掉各页 <head> 的 deco.css 与页尾的 deco.js 引用即可。
+ * ============================================================ */
+
+/* ---------- 装饰变量（跟随明暗主题自动变色） ---------- */
+:root {
+  --deco: color-mix(in srgb, var(--accent) 48%, transparent);   /* 主线 */
+  --deco-2: color-mix(in srgb, var(--accent) 22%, transparent); /* 弱线 */
+  --nav-h: 62px;
+}
+
+/* ============================================================
+ * 1. 屏幕环境层
+ * 极轻的暗角 + 扫描线，营造「战术终端」的观察窗感
+ * ============================================================ */
+body::after {
+  content: ''; position: fixed; inset: 0; z-index: 10; pointer-events: none;
+  background-image:
+    radial-gradient(135% 105% at 50% 2%, transparent 54%, rgba(0, 0, 0, .46) 100%),
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, .026) 0 1px, transparent 1px 3px);
+}
+[data-theme="light"] body::after {
+  background-image:
+    radial-gradient(135% 105% at 50% 2%, transparent 62%, rgba(26, 36, 52, .11) 100%);
+}
+
+/* ============================================================
+ * 2. 屏幕边框：四角括号 + 两侧刻度尺
+ * 固定在导航下方，内容从它下面滚过，像一层光学瞄具边框
+ * ============================================================ */
+.hud-frame {
+  position: fixed; left: 0; right: 0; bottom: 0; top: var(--nav-h);
+  z-index: 55; pointer-events: none;
+}
+.hud-c { position: absolute; width: 18px; height: 18px; border: 0 solid var(--deco); }
+.hud-c.tl { top: 10px; left: 10px; border-top-width: 1px; border-left-width: 1px; }
+.hud-c.tr { top: 10px; right: 10px; border-top-width: 1px; border-right-width: 1px; }
+.hud-c.bl { bottom: 10px; left: 10px; border-bottom-width: 1px; border-left-width: 1px; }
+.hud-c.br { bottom: 10px; right: 10px; border-bottom-width: 1px; border-right-width: 1px; }
+.hud-rail {
+  position: absolute; top: 44px; bottom: 44px; width: 9px;
+  background: repeating-linear-gradient(180deg, var(--deco-2) 0 1px, transparent 1px 15px);
+  mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 12%, #000 88%, transparent);
+}
+.hud-rail.l { left: 10px; }
+.hud-rail.r { right: 10px; }
+
+/* ============================================================
+ * 3. 顶部导航：底部一道中心亮起的分隔线 + 当前页方形指示块
+ * ============================================================ */
+.nav::after {
+  content: ''; position: absolute; left: 0; right: 0; bottom: -1px; height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 62%, transparent) 24%,
+    color-mix(in srgb, var(--accent) 62%, transparent) 76%,
+    transparent);
+}
+.nav-links a.on { position: relative; }
+.nav-links a.on::before {
+  content: ''; position: absolute; left: 4px; top: 50%; transform: translateY(-50%);
+  width: 3px; height: 11px; border-radius: 1px; background: var(--accent);
+}
+
+/* ============================================================
+ * 4. Hero：光学校准环水印 + 缓慢扫描光带 + 底部警示斜纹 + 状态读数
+ * ============================================================ */
+.hero-deco {
+  position: absolute; inset: 0; overflow: hidden;
+  pointer-events: none; z-index: 1;
+}
+/* 校准环：从右上角出血，作为水印存在 */
+.hero-ret {
+  position: absolute; top: -46px; right: -34px; width: 320px; height: 320px;
+  color: var(--accent); opacity: .13;
+}
+[data-theme="light"] .hero-ret { opacity: .1; }
+/* 底部警示斜纹（hazard stripe） */
+.hero-deco::before {
+  content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 5px;
+  background: repeating-linear-gradient(-45deg,
+    color-mix(in srgb, var(--accent) 80%, transparent) 0 7px,
+    transparent 7px 15px);
+  opacity: .42;
+}
+/* 自上而下的扫描光带 */
+.hero-deco::after {
+  content: ''; position: absolute; left: 0; right: 0; top: -180px; height: 180px;
+  background: linear-gradient(180deg,
+    transparent,
+    color-mix(in srgb, var(--accent) 24%, transparent) 58%,
+    transparent);
+  opacity: .55;
+}
+/* 右下角系统读数 */
+.hero-hud {
+  position: absolute; right: 26px; bottom: 19px;
+  display: flex; align-items: center; gap: 9px;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+  font-size: 10px; font-weight: 700; letter-spacing: .2em;
+  text-transform: uppercase; color: var(--txt-3);
+}
+.hero-hud .dot {
+  width: 6px; height: 6px; border-radius: 50%; background: var(--ok); flex: 0 0 auto;
+}
+
+/* ============================================================
+ * 5. 区块标题：眉标前的菱形标记 + 标题下的虚线标尺
+ * ============================================================ */
+.eyebrow::before {
+  content: ''; display: inline-block; width: 6px; height: 6px; margin-right: 9px;
+  vertical-align: 1px; background: var(--accent); transform: rotate(45deg);
+}
+.sec-head::after {
+  content: ''; display: block; height: 1px; margin-top: 19px;
+  background: repeating-linear-gradient(90deg, var(--deco-2) 0 7px, transparent 7px 14px);
+}
+
+/* ============================================================
+ * 6. 卡片：四角锁定括号（悬停时收紧变亮）
+ * ============================================================ */
+.item::before, .item::after {
+  content: ''; position: absolute; width: 9px; height: 9px;
+  border: 0 solid var(--c); opacity: .5; transition: .22s;
+}
+.item::before { top: 6px; right: 6px; border-top-width: 1px; border-right-width: 1px; }
+.item::after { bottom: 6px; left: 6px; border-bottom-width: 1px; border-left-width: 1px; }
+.item:hover::before, .item:hover::after { width: 14px; height: 14px; opacity: 1; }
+
+/* 面板类卡片：左上角单括号 */
+.card { position: relative; }
+.card::before {
+  content: ''; position: absolute; top: 8px; left: 8px; width: 12px; height: 12px;
+  border-top: 1px solid var(--deco-2); border-left: 1px solid var(--deco-2);
+  transition: .22s;
+}
+.card:hover::before { border-color: var(--deco); width: 16px; height: 16px; }
+
+/* 等级速览块：右下角括号（右上角被图标占用） */
+.tier-box::after {
+  content: ''; position: absolute; right: 12px; bottom: 12px; width: 11px; height: 11px;
+  border-right: 1px solid var(--c); border-bottom: 1px solid var(--c); opacity: .45;
+  transition: .2s;
+}
+.tier-box:hover::after { opacity: 1; width: 15px; height: 15px; }
+
+/* 首页数据块：右上角小刻度 */
+.stat { position: relative; }
+.stat::after {
+  content: ''; position: absolute; top: 9px; right: 9px; width: 9px; height: 9px;
+  border-top: 1px solid var(--deco-2); border-right: 1px solid var(--deco-2);
+}
+
+/* ============================================================
+ * 7. 表格：表头方块刻度 + 表头底线染色
+ * ============================================================ */
+thead th { border-bottom-color: color-mix(in srgb, var(--accent) 34%, transparent); }
+thead th::before {
+  content: ''; display: inline-block; width: 4px; height: 4px; margin-right: 7px;
+  vertical-align: 1px; border-radius: 1px;
+  background: color-mix(in srgb, var(--accent) 70%, transparent);
+}
+
+/* ============================================================
+ * 8. 耐久条：分段刻度（仪表盘质感）
+ * ============================================================ */
+.bar i {
+  background-image: repeating-linear-gradient(90deg,
+    rgba(0, 0, 0, .34) 0 2px, transparent 2px 9px);
+}
+[data-theme="light"] .bar i {
+  background-image: repeating-linear-gradient(90deg,
+    rgba(255, 255, 255, .6) 0 2px, transparent 2px 9px);
+}
+
+/* ============================================================
+ * 9. 页脚：顶部警示斜纹 + 数据链路状态条
+ * ============================================================ */
+.footer { position: relative; }
+.footer::before {
+  content: ''; position: absolute; left: 0; right: 0; top: 0; height: 4px;
+  background: repeating-linear-gradient(-45deg,
+    color-mix(in srgb, var(--accent) 70%, transparent) 0 8px,
+    transparent 8px 16px);
+  opacity: .28;
+}
+.foot-status {
+  display: inline-flex; align-items: center; gap: 7px;
+  padding: 3px 11px; border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--ok) 34%, transparent);
+  background: color-mix(in srgb, var(--ok) 10%, transparent);
+  color: var(--ok); font-size: 10.5px; font-weight: 700;
+  letter-spacing: .16em; text-transform: uppercase; white-space: nowrap;
+  font-family: ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+.foot-status .dot { width: 5px; height: 5px; border-radius: 50%; background: var(--ok); flex: 0 0 auto; }
+
+/* ============================================================
+ * 10. 动效（尊重系统的「减少动态效果」设置）
+ * ============================================================ */
+@keyframes hud-pulse {
+  0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--ok) 55%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 7px transparent; }
+}
+@keyframes hud-scan {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(560px); }
+}
+@keyframes ret-spin { to { transform: rotate(360deg); } }
+
+.hero-hud .dot, .foot-status .dot { animation: hud-pulse 2.6s ease-out infinite; }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-ret { animation: ret-spin 150s linear infinite; }
+  .hero-deco::after { animation: hud-scan 13s linear infinite; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-hud .dot, .foot-status .dot { animation: none; }
+}
+
+/* ============================================================
+ * 11. 响应式：窄屏收掉外围 HUD，避免压到内容
+ * ============================================================ */
+@media (max-width: 1100px) {
+  .hud-frame { display: none; }
+  .hero-hud { display: none; }
+}
+@media (max-width: 720px) {
+  .hero-ret { width: 210px; height: 210px; top: -58px; right: -48px; opacity: .11; }
+  .sec-head::after { margin-top: 15px; }
+  .card::before { top: 7px; left: 7px; width: 10px; height: 10px; }
+}

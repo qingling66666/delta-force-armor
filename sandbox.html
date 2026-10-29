@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 3 29 26H3L16 3Z' fill='%23ff9b21'/></svg>">
+
+<title>对枪沙盘 · 配装承伤与击杀枪数推演 | 三角洲行动护甲数据库</title>
+<meta name="description" content="《三角洲行动》对枪沙盘：为双方分别选好防弹衣、头盔、弹药与弹着部位，逐枪模拟护甲破碎与血量结算，推算谁能先被击倒、需要几枪、TTK 多少。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/deco.css">
+<style>
+  .sim-presets { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 18px; }
+  .sim-pre {
+    padding: 8px 15px; border-radius: 9px; font-size: 13px; font-weight: 700;
+    border: 1px solid var(--line); background: var(--panel); color: var(--txt-2);
+    transition: .18s; cursor: pointer;
+  }
+  .sim-pre:hover { color: var(--accent); border-color: var(--accent); }
+  .sim-loadout { display: flex; flex-wrap: wrap; gap: 7px; }
+  .sim-chip {
+    display: inline-flex; align-items: center; gap: 6px; padding: 5px 10px 5px 6px;
+    border-radius: 999px; border: 1px solid var(--line); background: var(--panel-2);
+    font-size: 11.5px; color: var(--txt-2); max-width: 100%;
+  }
+  .sim-chip b { font-weight: 700; color: var(--txt); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sim-chip .ico { width: 17px; height: 17px; flex: none; }
+  .sim-part { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+  .sim-part .field { flex: 1 1 240px; margin-bottom: 0; }
+  .part-tbl td b { font-family: ui-monospace, monospace; }
+  /* 沙盘内的表格都是短数值，不需要全局 620px 下限——
+     解除后即可在双列网格里排版，不必横向滚动 */
+  .part-tbl, #simOut table { min-width: 0; }
+  .part-tbl th, .part-tbl td, #simOut th, #simOut td { padding: 9px 10px; }
+  #simOut .res-main h4 { text-transform: none; letter-spacing: 0; font-size: 14px; color: var(--txt-2); }
+  @media (max-width: 720px) {
+    .sim-chip b { max-width: 130px; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+        <path d="M16 3 29 26H3L16 3Z" stroke="#ff9b21" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M16 12.5 22 23H10l6-10.5Z" fill="#ff9b21" opacity=".55"/>
+      </svg>
+      <span><small>Delta Force</small><b>护甲数据库</b></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-page="home">总览</a>
+      <a href="armor.html" data-page="armor">护甲图鉴</a>
+      <a href="helmet.html" data-page="helmet">头盔图鉴</a>
+      <a href="ammo.html" data-page="ammo">弹药速查</a>
+      <a href="mechanics.html" data-page="mechanics">机制解析</a>
+      <a href="compare.html" data-page="compare">横向对比</a>
+      <a href="sandbox.html" data-page="sandbox">对枪沙盘</a>
+      <button class="theme-btn" id="themeBtn" title="切换明暗主题" aria-label="切换主题"></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding:0">
+  <div class="wrap hero-in" style="padding:48px 0 44px">
+    <div class="eyebrow">Duel Sandbox · 把公式跑成对局</div>
+    <h1 style="font-size:clamp(26px,3.4vw,38px)">对枪沙盘</h1>
+    <p class="lead">护甲图鉴告诉你「这件甲有多耐打」，弹药速查告诉你「这发弹有多能穿」——但真正的对局是一次次结算叠出来的。这里给双方各配一套<b style="color:var(--txt)">防弹衣 + 头盔 + 弹药</b>，逐枪推演护甲耐久与血量，直接告诉你<b style="color:var(--txt)">谁能先倒、要几枪、TTK 多少</b>。</p>
+  </div>
+</header>
+
+<main class="sec" style="padding-top:34px">
+  <div class="wrap">
+
+    <!-- 结算前提 -->
+    <div class="sec-head">
+      <div class="eyebrow">Model</div>
+      <h2 style="font-size:24px">结算前提</h2>
+      <p>沙盘不引入任何新公式，全部基于站内已交叉验证的机制。先把前提摊开，结论才可信。</p>
+    </div>
+    <div class="grid g2">
+      <div class="card" style="border-left:3px solid var(--accent)">
+        <h3 style="font-size:16px;margin-bottom:12px">血量与部位</h3>
+        <div class="tbl-wrap">
+          <table class="part-tbl">
+            <thead><tr><th>部位</th><th>倍率</th><th>受保护情况</th></tr></thead>
+            <tbody id="partTable"></tbody>
+          </table>
+        </div>
+        <p style="font-size:12.5px;color:var(--txt-3);margin-top:12px;line-height:1.7">
+          干员总血量 <b style="color:var(--txt)">100</b>，全游戏只有这一条血量池——没有「手臂独立血量」这种设定。四肢伤害照样扣同一个血条。
+        </p>
+      </div>
+      <div class="card">
+        <h3 style="font-size:16px;margin-bottom:12px">推演规则</h3>
+        <p style="font-size:13.5px;color:var(--txt-2);line-height:1.85">
+          · 两侧弹着部位相同，模拟「正面对枪互相命中同一处」；<br>
+          · 每枪按 <code style="font-size:12.5px">calcPen</code> 结算一次：先算本枪甲伤并扣护甲耐久，再算穿透后落在身体上的实际肉伤；<br>
+          · 护甲耐久归零的那一枪记为<b style="color:var(--txt)">碎甲枪</b>，此后该部位按无防护全额结算；<br>
+          · 命中头部时判定的是<b style="color:var(--txt)">头盔</b>耐久，胸腹判定防弹衣，四肢不判定护甲；<br>
+          · TTK 以「首发即命中」计 <code style="font-size:12.5px">(击倒枪数 - 1) × 60 / RPM</code>，不含抬枪与跑动时间。
+        </p>
+      </div>
+    </div>
+
+    <!-- 沙盘 -->
+    <div class="sec-head" style="margin-top:52px">
+      <div class="eyebrow">Simulate</div>
+      <h2 style="font-size:24px">配置双方，看一眼结果</h2>
+      <p>改任意一项都会立刻重算。想快速试手感，先点一个预设场景。</p>
+    </div>
+
+    <div class="sim-presets" id="simPresets"></div>
+
+    <div class="grid g2">
+      <div id="simMe"></div>
+      <div id="simFoe"></div>
+    </div>
+
+    <div class="card" style="margin-top:16px">
+      <div class="sim-part">
+        <div class="field">
+          <label for="simPart">弹着部位</label>
+          <select id="simPart"></select>
+          <div class="hint">两侧同一部位。想单独看某一侧的承伤，把另一侧的枪械数值调大即可拉开差距。</div>
+        </div>
+      </div>
+    </div>
+
+    <div id="simOut" style="margin-top:22px"></div>
+
+    <div class="card" style="margin-top:34px;border-left:3px solid var(--accent)">
+      <h3 style="font-size:17px;margin-bottom:10px">怎么读这个沙盘</h3>
+      <p style="font-size:13.5px;color:var(--txt-2);line-height:1.85">
+        <b style="color:var(--txt)">差一级穿透，结果会翻倍。</b>弹穿透等级与护甲等级持平时肉伤只剩五成，高一级回到七成五，高两级及以上才是全额——所以同口径换一档弹，击倒枪数经常从 4 枪掉到 3 枪，这就是「弹比甲重要」的由来。<br>
+        <b style="color:var(--txt)">护甲的价值是拖时间，不是免伤。</b>低一级穿透时肉伤为 0，但只要你还打得动（甲伤不衰减到 0），几十发之内护甲必然碎，碎甲瞬间开始全额吃伤。沙盘里「碎甲枪」和「击倒枪」两个数字的差距，就是这件甲给你争取到的窗口。<br>
+        <b style="color:var(--txt)">爆头是唯一能跳过高耐久防弹衣的路。</b>把部位切到头部，判定立刻从防弹衣换成头盔（耐久普遍只有防弹衣的 1/2 到 1/3），1.9 倍倍率再叠加低耐久，绝大多数情况下击倒枪数会明显下降。
+      </p>
+    </div>
+
+    <div class="card" style="margin-top:20px;border-left:3px solid var(--warn)">
+      <h3 style="font-size:17px;margin-bottom:10px">数据边界说明</h3>
+      <p style="font-size:13.5px;color:var(--txt-2);line-height:1.8">
+        沙盘推演的是<b style="color:var(--txt)">「每一枪都命中同一部位、且处于枪械优势射程内」</b>的理想情形。真实对局里还有这些变量没被建模：超出优势射程后的穿透衰减、倾斜角命中造成的跳弹、连续射击的散布与后坐补偿、护甲受击后的呼吸/移速影响，以及最关键的——你根本不会每枪都打中胸口。因此这里给出的是<b style="color:var(--txt)">配装强弱的上限比较</b>，用来看「两套甲在同弹种下差多少」，而不是预测某场对枪的胜负。枪械的肉伤 / 甲伤请以游戏内面板为准。
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span><b>三角洲行动 · 护甲数据库</b> — 非官方粉丝向站点，素材版权归腾讯所有，仅供配装参考。</span>
+    <span style="margin-left:auto">数据整理自公开社区实测与官方公告，请以游戏内面板为准。</span>
+  </div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/icons.js"></script>
+<script src="assets/itemimg.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/deco.js"></script>
+<script>
+  initNav('sandbox');
+
+  /* 部位倍率表 */
+  document.getElementById('partTable').innerHTML = PART_MULT.map(p => `
+    <tr>
+      <td><b>${esc(p.name)}</b></td>
+      <td class="num">×${p.mult}</td>
+      <td style="font-size:13px;color:var(--txt-2)">${p.armored ? (p.armored === 'helmet' ? '判定头盔' : '判定防弹衣') : '无防护'}</td>
+    </tr>`).join('');
+
+  /* 预设场景 */
+  const PRESETS = [
+    {
+      name: '同级内卷',
+      part: 'chest',
+      me:  { armor: 'MK-2 战术背心', helmet: 'GT1 战术头盔', ammo: '5.56×45mm|M855A1', flesh: 40, armorDmg: 40, rpm: 600 },
+      foe: { armor: 'MK-2 战术背心', helmet: 'GT1 战术头盔', ammo: '7.62×39mm|BP',  flesh: 40, armorDmg: 40, rpm: 600 }
+    },
+    {
+      name: '穿甲压制',
+      part: 'chest',
+      me:  { armor: '重型防弹背心', helmet: 'Mask-1 铁壁头盔', ammo: '7.62×39mm|AP',   flesh: 40, armorDmg: 40, rpm: 600 },
+      foe: { armor: '重型防弹背心', helmet: 'Mask-1 铁壁头盔', ammo: '5.56×45mm|FMJ',  flesh: 40, armorDmg: 40, rpm: 600 }
+    },
+    {
+      name: '爆头对狙',
+      part: 'head',
+      me:  { armor: '泰坦防弹装甲', helmet: 'GT5 指挥官头盔', ammo: '.338 Lap Magnum|AWM 专用弹', flesh: 40, armorDmg: 40, rpm: 600 },
+      foe: { armor: '泰坦防弹装甲', helmet: 'GT5 指挥官头盔', ammo: '5.56×45mm|M995',          flesh: 40, armorDmg: 40, rpm: 600 }
+    }
+  ];
+
+  const partSel = document.getElementById('simPart');
+
+  function applyPreset(p) {
+    ['me', 'foe'].forEach(key => {
+      const c = p[key];
+      [['Armor', 'armor'], ['Helmet', 'helmet'], ['Ammo', 'ammo'], ['Flesh', 'flesh'], ['ArmorDmg', 'armorDmg'], ['Rpm', 'rpm']].forEach(([id, field]) => {
+        const el = document.getElementById(key + id);
+        if (!el) return;
+        el.value = c[field];
+        el.dispatchEvent(new Event('change', { bubbles: true }));
+      });
+    });
+    partSel.value = p.part;
+    partSel.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+
+  document.getElementById('simPresets').innerHTML =
+    PRESETS.map((p, i) => `<button type="button" class="sim-pre" data-i="${i}">${esc(p.name)}</button>`).join('');
+  document.getElementById('simPresets').addEventListener('click', e => {
+    const btn = e.target.closest('.sim-pre');
+    if (btn) applyPreset(PRESETS[+btn.dataset.i]);
+  });
+
+  initSim();
+</script>
+</body>
+</html>

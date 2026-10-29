@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 3 29 26H3L16 3Z' fill='%23ff9b21'/></svg>">
+
+<title>页面不存在 · 404 | 三角洲行动 护甲数据库</title>
+<meta name="description" content="该页面不存在。《三角洲行动》护甲数据库提供护甲、头盔、弹药与配装推演数据。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/deco.css">
+<style>
+  .nf { text-align: center; padding: 70px 0 40px; }
+  .nf-code {
+    font-size: clamp(64px, 14vw, 132px); font-weight: 500; line-height: 1;
+    letter-spacing: .06em; margin: 0; color: transparent;
+    -webkit-text-stroke: 1px var(--line-2);
+  }
+  .nf h1 { font-size: clamp(20px, 2.6vw, 28px); margin: 18px 0 10px; }
+  .nf p { color: var(--txt-2); margin: 0 auto; max-width: 520px; }
+  .nf-hint {
+    margin-top: 26px; font-size: 12.5px; color: var(--txt-3);
+    letter-spacing: .04em;
+  }
+  .nf-nav { display: flex; flex-wrap: wrap; gap: 9px; justify-content: center; margin-top: 12px; }
+  .nf-nav a {
+    display: inline-block; padding: 8px 15px; font-size: 13px;
+    border: 1px solid var(--line); border-radius: 9px;
+    color: var(--txt-2); background: var(--panel); text-decoration: none;
+  }
+  .nf-nav a:hover { border-color: var(--accent); color: var(--accent); }
+  .nf-nav a.on { border-color: var(--accent); color: var(--accent); background: var(--accent-dim); }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+        <path d="M16 3 29 26H3L16 3Z" stroke="#ff9b21" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M16 12.5 22 23H10l6-10.5Z" fill="#ff9b21" opacity=".55"/>
+      </svg>
+      <span><small>Delta Force</small><b>护甲数据库</b></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-page="home">总览</a>
+      <a href="armor.html" data-page="armor">护甲图鉴</a>
+      <a href="helmet.html" data-page="helmet">头盔图鉴</a>
+      <a href="ammo.html" data-page="ammo">弹药速查</a>
+      <a href="mechanics.html" data-page="mechanics">机制解析</a>
+      <a href="compare.html" data-page="compare">横向对比</a>
+      <a href="sandbox.html" data-page="sandbox">对枪沙盘</a>
+      <button class="theme-btn" id="themeBtn" title="切换明暗主题" aria-label="切换主题"></button>
+    </div>
+  </div>
+</nav>
+
+<main>
+  <div class="wrap nf">
+    <p class="nf-code">404</p>
+    <h1>信号丢失，未找到该页面</h1>
+    <p>链接可能已失效，或地址输入有误。下面这些页面都还在。</p>
+    <div class="nf-nav">
+      <a href="index.html" class="on">总览</a>
+      <a href="armor.html">护甲图鉴</a>
+      <a href="helmet.html">头盔图鉴</a>
+      <a href="ammo.html">弹药速查</a>
+      <a href="mechanics.html">机制解析</a>
+      <a href="compare.html">横向对比</a>
+      <a href="sandbox.html">对枪沙盘</a>
+    </div>
+    <p class="nf-hint">ERR_ROUTE_NOT_FOUND · 请从上方导航重新进入</p>
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span><b>三角洲行动 · 护甲数据库</b> — 非官方粉丝向站点，素材版权归腾讯所有，仅供配装参考。</span>
+    <span style="margin-left:auto">数据整理自公开社区实测，请以游戏内面板为准。</span>
+  </div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/icons.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/deco.js"></script>
+<script>
+  initNav('');
+</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><path d='M16 3 29 26H3L16 3Z' fill='%23ff9b21'/></svg>">
+
+<title>护甲图鉴 · 1-6 级防弹衣全数据 | 三角洲行动</title>
+<meta name="description" content="《三角洲行动》1-6 级防弹衣全数据：耐久、重量、瞄准速度惩罚、移动速度惩罚、维修损耗与配装点评。">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/deco.css">
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="brand" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 32 32" fill="none">
+        <path d="M16 3 29 26H3L16 3Z" stroke="#ff9b21" stroke-width="2.2" stroke-linejoin="round"/>
+        <path d="M16 12.5 22 23H10l6-10.5Z" fill="#ff9b21" opacity=".55"/>
+      </svg>
+      <span><small>Delta Force</small><b>护甲数据库</b></span>
+    </a>
+    <div class="nav-links">
+      <a href="index.html" data-page="home">总览</a>
+      <a href="armor.html" data-page="armor">护甲图鉴</a>
+      <a href="helmet.html" data-page="helmet">头盔图鉴</a>
+      <a href="ammo.html" data-page="ammo">弹药速查</a>
+      <a href="mechanics.html" data-page="mechanics">机制解析</a>
+      <a href="compare.html" data-page="compare">横向对比</a>
+      <a href="sandbox.html" data-page="sandbox">对枪沙盘</a>
+      <button class="theme-btn" id="themeBtn" title="切换明暗主题" aria-label="切换主题"></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero" style="padding:0">
+  <div class="wrap hero-in" style="padding:48px 0 44px">
+    <div class="eyebrow">Armor Atlas · 25 件</div>
+    <h1 style="font-size:clamp(26px,3.4vw,38px)">防弹衣图鉴</h1>
+    <p class="lead">从一级尼龙防弹衣到六级泰坦防弹装甲。点击任意卡片查看完整属性与维修推演。</p>
+  </div>
+</header>
+
+<main class="sec" style="padding-top:34px">
+  <div class="wrap">
+
+    <div class="filters">
+      <span class="lab">等级</span>
+      <div id="tierChips" style="display:flex;gap:7px;flex-wrap:wrap"></div>
+      <span class="lab" style="margin-left:6px">类型</span>
+      <div id="subChips" style="display:flex;gap:7px;flex-wrap:wrap">
+        <button class="chip on" data-v="all">全部</button>
+        <button class="chip" data-v="半甲">半甲</button>
+        <button class="chip" data-v="全甲">全甲</button>
+        <button class="chip" data-v="重甲">重甲</button>
+      </div>
+      <select class="sel" id="sort">
+        <option value="tier">按等级排序</option>
+        <option value="dur">按耐久排序</option>
+        <option value="wt">按重量排序</option>
+        <option value="wear">按维修损耗排序</option>
+        <option value="ads">按机动惩罚排序</option>
+      </select>
+      <input class="search" id="kw" placeholder="搜索名称 / 别称 / 标签…">
+    </div>
+
+    <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+      <span id="cnt" style="font-size:13px;color:var(--txt-3)"></span>
+      <span style="font-size:12.5px;color:var(--txt-3)">
+        · 半甲＝只护胸部以上躯干；全甲＝胸腹完整防护；重甲＝最大防护范围，负面最大
+      </span>
+    </div>
+
+    <div class="items" id="armorGrid"></div>
+
+    <h3 style="font-size:19px;margin:40px 0 6px">图标说明：护甲的 11 种原型</h3>
+    <p style="font-size:13.5px;color:var(--txt-2);margin-bottom:16px">
+      每件防弹衣都按它的实际结构与防护面积对应一种图标原型，卡片左上角的图标即为该件的原型归类。虚线部分表示该设计的防护盲区。
+    </p>
+    <div class="ico-legend" id="armorLegend"></div>
+
+    <div class="card" style="margin-top:26px;border-left:3px solid var(--warn)">
+      <h3 style="font-size:16px;margin-bottom:8px">关于卡片上的装备图片</h3>
+      <p style="font-size:13px;color:var(--txt-2);line-height:1.75">
+        每件防弹衣卡片左上角都是<b style="color:var(--txt)">游戏内官方图标</b>（取自三角洲行动官方素材库），外观、配色与游戏内一致，可按图识装。全部 25 件防弹衣均已配图。判断一件甲的强弱，请以耐久、重量、机动惩罚与维修损耗这些面板数据为准。
+      </p>
+    </div>
+
+    <div class="card" style="margin-top:38px;border-left:3px solid var(--accent)">
+      <h3 style="font-size:17px;margin-bottom:10px">选甲速记</h3>
+      <p style="font-size:13.5px;color:var(--txt-2)">
+        <b style="color:var(--txt)">1-2 级</b>：只有「凑战备值」这一个用途，不要带进 PvP。一级里唯一有点价值的是户外棒球帽（头盔），二级里通用战术背心耐久最高。<br>
+        <b style="color:var(--txt)">3 级</b>：TG-H 防弹衣是平民战神——胸腹双护、负面小、一个自制维修包能修满；同级的阿萨拉蓝甲与哈夫克蓝甲都不护腹部。<br>
+        <b style="color:var(--txt)">4 级</b>：MK-2 战术背心是耐久与损耗的最优解（110 耐久 / 9% 损耗），突击甲虽然负面极低但 18% 维修损耗让它沦为一次性消耗品。<br>
+        <b style="color:var(--txt)">5 级</b>：要机动选精英防弹背心（比紫甲还轻），要均衡选 FS 复合防弹衣，要正面抗伤选重型防弹背心（125 耐久）。<br>
+        <b style="color:var(--txt)">6 级</b>：特里克 MAS2.0 最耐修（6%），泰坦耐久最高（150）但机动极差，HA-2 手感最好且唯一可交易。
+      </p>
+    </div>
+
+  </div>
+</main>
+
+<footer class="footer">
+  <div class="wrap">
+    <span><b>三角洲行动 · 护甲数据库</b> — 非官方粉丝向站点，素材版权归腾讯所有，仅供配装参考。</span>
+    <span style="margin-left:auto">数据整理自公开社区实测，请以游戏内面板为准。</span>
+  </div>
+</footer>
+
+<script src="assets/data.js"></script>
+<script src="assets/icons.js"></script>
+<script src="assets/itemimg.js"></script>
+<script src="assets/app.js"></script>
+<script src="assets/deco.js"></script>
+<script>
+  initNav('armor');
+  setupAtlas({ data: ARMORS, mountId: 'armorGrid', type: 'armor' });
+  renderIconLegend('armor', 'armorLegend');
+</script>
+</body>
+</html>
